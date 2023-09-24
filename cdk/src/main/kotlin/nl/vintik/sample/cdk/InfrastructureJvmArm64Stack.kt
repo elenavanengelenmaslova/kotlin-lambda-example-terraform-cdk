@@ -1,6 +1,12 @@
 package nl.vintik.sample.cdk
 
-import com.hashicorp.cdktf.*
+import com.hashicorp.cdktf.TerraformStack
+import com.hashicorp.cdktf.providers.aws.iam_policy.IamPolicy
+import com.hashicorp.cdktf.providers.aws.iam_policy.IamPolicyConfig
+import com.hashicorp.cdktf.providers.aws.iam_role.IamRole
+import com.hashicorp.cdktf.providers.aws.iam_role.IamRoleConfig
+import com.hashicorp.cdktf.providers.aws.iam_role_policy.IamRolePolicy
+import com.hashicorp.cdktf.providers.aws.iam_role_policy.IamRolePolicyConfig
 import com.hashicorp.cdktf.providers.aws.lambda_function.LambdaFunction
 import com.hashicorp.cdktf.providers.aws.lambda_function.LambdaFunctionConfig
 import com.hashicorp.cdktf.providers.aws.provider.AwsProvider
@@ -8,23 +14,83 @@ import com.hashicorp.cdktf.providers.aws.provider.AwsProviderConfig
 import software.constructs.Construct
 
 
-class InfrastructureJvmArm64Stack(scope: Construct, id: String) : TerraformStack(scope, id) {
+class InfrastructureJvmArm64Stack(
+    scope: Construct,
+    id: String,
+) : TerraformStack(scope, id) {
 
     init {
         // Get the region from environment variables
-        val region = System.getenv("DEPLOY_TARGET_REGION")
+        val region =
+            System.getenv("DEPLOY_TARGET_REGION")
 
         // Configure the AWS Provider
-        AwsProvider(this, "Aws", AwsProviderConfig.builder().region(region).build())
+        AwsProvider(
+            this,
+            "Aws",
+            AwsProviderConfig.builder().region(region)
+                .build()
+        )
 
-        val function = LambdaFunction(this, "LambdaFunction", LambdaFunctionConfig.builder()
-            .functionName("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun")
-            .handler("nl.vintik.sample.KotlinLambda::handleRequest")
-            .runtime("java17")
-            .filename("../build/dist/function.zip")
-            .architectures(listOf("arm64"))
-            .memorySize(512)
-            .timeout(120)
-            .build())
+        val lambdaRole = IamRole(
+            this, "LambdaExecutionRole",
+            IamRoleConfig.builder().assumeRolePolicy(
+                """{
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Principal": {"Service": "lambda.amazonaws.com"},
+                            "Effect": "Allow"
+                        }
+                    ]
+                }"""
+            ).build()
+        )
+
+        val policy = IamPolicy(
+            this, "LambdaPolicy",
+            IamPolicyConfig.builder()
+                .policy(
+                    """
+            {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"
+                        ],
+                        "Resource": "arn:aws:logs:*:*:*"
+                    }
+                ]
+            }
+        """
+                ).build()
+        )
+
+        IamRolePolicy(
+            this, "LambdaLoggingPolicy",
+            IamRolePolicyConfig.builder()
+                .policy(policy.arn)
+                .role(lambdaRole.arn).build()
+        )
+
+        val function = LambdaFunction(
+            this,
+            "LambdaFunction",
+            LambdaFunctionConfig.builder()
+                .functionName("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun")
+                .handler("nl.vintik.sample.KotlinLambda::handleRequest")
+                .runtime("java17")
+                .filename("../build/dist/function.zip")
+                .architectures(listOf("arm64"))
+                .role(lambdaRole.arn)
+                .memorySize(512)
+                .timeout(120)
+                .build()
+        )
     }
 }

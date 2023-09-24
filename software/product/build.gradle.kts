@@ -33,5 +33,5 @@ tasks.register<Zip>("packageDistribution") {
     }
     archiveFileName.set("function.zip")
     destinationDirectory.set(file("${project.rootDir}/build/dist"))
-    dependsOn(":infra-aws:build")
+    dependsOn(":product:build")
 }

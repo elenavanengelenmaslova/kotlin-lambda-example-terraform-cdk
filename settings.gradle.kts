@@ -6,8 +6,8 @@ pluginManagement {
     
 }
 rootProject.name = "kotlin-lambda-example-terraform-cdk"
-include(":infra-aws")
-project(":infra-aws").projectDir = file("software/infra/aws")
+include(":product")
+project(":product").projectDir = file("software/product")
 //include(":products-on-crac")
 //project(":products-on-crac").projectDir = file("software/products-on-crac")
 include(":cdk")

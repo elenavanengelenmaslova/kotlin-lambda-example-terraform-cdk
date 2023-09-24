@@ -15,7 +15,7 @@ application {
 }
 
 tasks.named("run") {
-    dependsOn(":infra-aws:packageDistribution")
+    dependsOn(":product:packageDistribution")
 }
 repositories {
     mavenCentral()
