@@ -23,7 +23,7 @@ env:
 
 jobs:
   build:
-    name: Build CDK Codebase
+    name: Build and package software
     runs-on: ubuntu-latest
 
     steps:
@@ -134,12 +134,12 @@ jobs:
 
       - name: Generate Terraform files
         run: |
-          cd ${GITHUB_WORKSPACE}/infrastructure
+          cd ${GITHUB_WORKSPACE}/cdk
           cdktf get
           cdktf synth
 
       - name: Deploy with Terraform
         run: |
-          cd ${GITHUB_WORKSPACE}/infrastructure/cdktf.out/stacks/${{ matrix.config.stack-name }}
+          cd ${GITHUB_WORKSPACE}/cdk/cdktf.out/stacks/${{ matrix.config.stack-name }}
           terraform init
           terraform apply -auto-approve
