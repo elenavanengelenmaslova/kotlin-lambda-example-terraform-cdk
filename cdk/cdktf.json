@@ -1,5 +1,5 @@
 {
-  "language": "kotlin",
+  "language": "java",
   "app": "gradle run",
   "terraformProviders": [
     "hashicorp/aws@~> 5.0"
