@@ -1,0 +1,13 @@
+{
+  "language": "kotlin",
+  "app": "gradle run",
+  "terraformProviders": [
+    "hashicorp/aws@~> 5.0"
+  ],
+  "terraformModules": [],
+  "codeMakerOutput": "generated",
+  "context": {
+    "excludeStackIdFromLogicalIds": "true",
+    "allowSepCharsInLogicalIds": "true"
+  }
+}
