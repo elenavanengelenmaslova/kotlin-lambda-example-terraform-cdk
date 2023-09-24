@@ -140,6 +140,6 @@ jobs:
 
       - name: Deploy with Terraform
         run: |
-          cd ${GITHUB_WORKSPACE}/cdk/cdktf.out/stacks/${{ matrix.config.stack-name }}
+          cd cdktf.out/stacks/${{ matrix.config.stack-name }}
           terraform init
           terraform apply -auto-approve
