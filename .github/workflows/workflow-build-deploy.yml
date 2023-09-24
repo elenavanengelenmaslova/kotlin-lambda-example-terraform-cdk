@@ -101,7 +101,7 @@ jobs:
           [
             {
               component-name: "Kotlin Lambda JVM Arm64",
-              stack-name: "Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-example",
+              stack-name: "Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Example",
             }
           ]
     name: ${{ matrix.config.component-name }} deployment
