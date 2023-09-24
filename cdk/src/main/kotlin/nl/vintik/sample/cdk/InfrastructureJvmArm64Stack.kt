@@ -1,6 +1,9 @@
 package nl.vintik.sample.cdk
 
 import com.hashicorp.cdktf.TerraformStack
+import com.hashicorp.cdktf.providers.aws.dynamodb_table.DynamodbTable
+import com.hashicorp.cdktf.providers.aws.dynamodb_table.DynamodbTableAttribute
+import com.hashicorp.cdktf.providers.aws.dynamodb_table.DynamodbTableConfig
 import com.hashicorp.cdktf.providers.aws.iam_policy.IamPolicy
 import com.hashicorp.cdktf.providers.aws.iam_policy.IamPolicyConfig
 import com.hashicorp.cdktf.providers.aws.iam_role.IamRole
@@ -31,6 +34,25 @@ class InfrastructureJvmArm64Stack(
             AwsProviderConfig.builder().region(region)
                 .build()
         )
+
+        val tableName = "Products-Terraform-Cdk-Example"
+        val productsTable = DynamodbTable(
+            this, tableName,
+            DynamodbTableConfig.builder()
+                .name(tableName)
+                .hashKey("id")
+                .attribute(
+                    listOf(
+                        DynamodbTableAttribute.builder()
+                            .name("id")
+                            .type("S")
+                            .build()
+                    )
+                )
+                .billingMode("PAY_PER_REQUEST")
+                .build()
+        )
+
 
         val lambdaRole = IamRole(
             this, "LambdaExecutionRole",
@@ -64,7 +86,16 @@ class InfrastructureJvmArm64Stack(
                             "logs:PutLogEvents"
                         ],
                         "Resource": "arn:aws:logs:*:*:*"
-                    }
+                    },
+                     {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:GetItem",
+                "dynamodb:Query",
+                "dynamodb:Scan"
+            ],
+            "Resource": "${productsTable.arn}"
+        }
                 ]
             }
         """
@@ -72,11 +103,12 @@ class InfrastructureJvmArm64Stack(
         )
 
         IamRolePolicy(
-            this, "LambdaLoggingPolicy",
+            this, "LambdaPolicy",
             IamRolePolicyConfig.builder()
                 .policy(policy.arn)
                 .role(lambdaRole.arn).build()
         )
+
 
         val function = LambdaFunction(
             this,
