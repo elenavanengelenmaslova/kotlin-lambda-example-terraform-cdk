@@ -75,19 +75,19 @@ class InfrastructureJvmArm64Stack(
             IamPolicyConfig.builder()
                 .policy(
                     """
-            {
-                "Version": "2012-10-17",
-                "Statement": [
-                    {
-                        "Effect": "Allow",
-                        "Action": [
-                            "logs:CreateLogGroup",
-                            "logs:CreateLogStream",
-                            "logs:PutLogEvents"
-                        ],
-                        "Resource": "arn:aws:logs:*:*:*"
-                    },
-                     {
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
             "Effect": "Allow",
             "Action": [
                 "dynamodb:GetItem",
@@ -96,10 +96,11 @@ class InfrastructureJvmArm64Stack(
             ],
             "Resource": "${productsTable.arn}"
         }
-                ]
-            }
-        """
-                ).build()
+    ]
+}
+                    """.trimIndent()
+                )
+                .build()
         )
 
         IamRolePolicy(
@@ -110,14 +111,14 @@ class InfrastructureJvmArm64Stack(
         )
 
 
-        val function = LambdaFunction(
+        LambdaFunction(
             this,
             "LambdaFunction",
             LambdaFunctionConfig.builder()
                 .functionName("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun")
                 .handler("nl.vintik.sample.KotlinLambda::handleRequest")
                 .runtime("java17")
-                .filename("../build/dist/function.zip")
+                .filename("../../../build/dist/function.zip")
                 .architectures(listOf("arm64"))
                 .role(lambdaRole.arn)
                 .memorySize(512)
