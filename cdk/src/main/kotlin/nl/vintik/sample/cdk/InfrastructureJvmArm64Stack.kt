@@ -56,7 +56,8 @@ class InfrastructureJvmArm64Stack(
 
         val lambdaRole = IamRole(
             this, "LambdaExecutionRole",
-            IamRoleConfig.builder().assumeRolePolicy(
+            IamRoleConfig.builder()
+                .assumeRolePolicy(
                 """{
                     "Version": "2012-10-17",
                     "Statement": [
@@ -106,8 +107,8 @@ class InfrastructureJvmArm64Stack(
         IamRolePolicy(
             this, "LambdaRolePolicy",
             IamRolePolicyConfig.builder()
-                .policy(policy.arn)
-                .role(lambdaRole.arn).build()
+                .policy(policy.policy)
+                .role(lambdaRole.name).build()
         )
 
 
