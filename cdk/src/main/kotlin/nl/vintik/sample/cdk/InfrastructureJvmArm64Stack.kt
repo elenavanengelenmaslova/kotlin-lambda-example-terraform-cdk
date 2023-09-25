@@ -118,7 +118,7 @@ class InfrastructureJvmArm64Stack(
                 .functionName("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun")
                 .handler("nl.vintik.sample.KotlinLambda::handleRequest")
                 .runtime("java17")
-                .filename("../../../build/dist/function.zip")
+                .filename("${System.getenv("GITHUB_WORKSPACE")}/build/dist/function.zip")
                 .architectures(listOf("arm64"))
                 .role(lambdaRole.arn)
                 .memorySize(512)
