@@ -55,8 +55,9 @@ class InfrastructureJvmArm64Stack(
 
 
         val lambdaRole = IamRole(
-            this, "LambdaExecutionRole",
+            this, "Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun-Role",
             IamRoleConfig.builder()
+                .name("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun-Role")
                 .assumeRolePolicy(
                 """{
                     "Version": "2012-10-17",
@@ -72,8 +73,10 @@ class InfrastructureJvmArm64Stack(
         )
 
         val policy = IamPolicy(
-            this, "LambdaPolicy",
+            this, "Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun-Policy",
             IamPolicyConfig.builder()
+                .name("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun-Policy")
+                .dependsOn(listOf(productsTable))
                 .policy(
                     """
 {
@@ -105,8 +108,9 @@ class InfrastructureJvmArm64Stack(
         )
 
         IamRolePolicy(
-            this, "LambdaRolePolicy",
+            this, "Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun-RolePolicy",
             IamRolePolicyConfig.builder()
+                .name("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun-RolePolicy")
                 .policy(policy.policy)
                 .role(lambdaRole.name).build()
         )
@@ -114,7 +118,7 @@ class InfrastructureJvmArm64Stack(
 
         LambdaFunction(
             this,
-            "LambdaFunction",
+            "Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun",
             LambdaFunctionConfig.builder()
                 .functionName("Terraform-Cdk-Kotlin-Lambda-JVM-Arm64-Fun")
                 .handler("nl.vintik.sample.KotlinLambda::handleRequest")
@@ -122,6 +126,7 @@ class InfrastructureJvmArm64Stack(
                 .filename("${System.getenv("GITHUB_WORKSPACE")}/build/dist/function.zip")
                 .architectures(listOf("arm64"))
                 .role(lambdaRole.arn)
+                .dependsOn(listOf(productsTable, lambdaRole))
                 .memorySize(512)
                 .timeout(120)
                 .build()
