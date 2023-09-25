@@ -103,7 +103,7 @@ class InfrastructureJvmArm64Stack(
         )
 
         IamRolePolicy(
-            this, "LambdaPolicy",
+            this, "LambdaRolePolicy",
             IamRolePolicyConfig.builder()
                 .policy(policy.arn)
                 .role(lambdaRole.arn).build()
