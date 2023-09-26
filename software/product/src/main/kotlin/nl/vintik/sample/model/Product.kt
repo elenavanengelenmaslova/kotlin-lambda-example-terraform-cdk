@@ -17,7 +17,7 @@ data class Product(
 ) {
 
     companion object {
-        const val TABLE_NAME = "Products-SnapStart-Example"
+        const val TABLE_NAME = "Products-Terraform-Cdk-Example"
 
         val schema: TableSchema<Product> = TableSchema.fromClass(Product::class.java)
 

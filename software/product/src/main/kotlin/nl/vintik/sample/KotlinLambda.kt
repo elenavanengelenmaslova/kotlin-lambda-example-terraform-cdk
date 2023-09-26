@@ -6,10 +6,10 @@ import nl.vintik.sample.model.Product
 import nl.vintik.sample.model.ProductRequest
 
 @Suppress("UNUSED")
-class KotlinLambda : RequestHandler<ProductRequest, String> {
-    //private val productsController = ProductsController(ProductsService(Product.productTable))
+class KotlinLambda : RequestHandler<ProductRequest, Product> {
+    private val productsController = ProductsController(ProductsService(Product.productTable))
 
-    override fun handleRequest(event: ProductRequest, context: Context): String {//Product? {
-        return "Hello world!"
+    override fun handleRequest(event: ProductRequest, context: Context): Product? {
+        return productsController.find(event.id)
     }
 }
