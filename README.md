@@ -10,6 +10,6 @@ kotlin-lambda-example-terraform-cdk/
 │       └── build.gradle.kts
 │
 └── cdk/  // Terraform CDK Kotlin code
-    ├── build.gradle.kts  // Build file for cdk
-    └── src/
+    ├── src/
+    └── build.gradle.kts  // Build file for cdk
 ```
